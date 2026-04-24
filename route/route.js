@@ -11,7 +11,12 @@ const { addToCart, getCart, clearCart, removeFromCart } = require("../controller
 const upload = require("../middleware/upload");
 const { checkout } = require("../controller/checkout");
 const adminlogin = require("../controller/adminlogin");
-const { cacheProducts, cacheProductDetail } = require("../middleware/cache");
+const { cacheProducts, cacheProductDetail, clearAllProductCaches } = require("../middleware/cache");
+// Route to clear all caches (for admin or development use)
+router.post("/clear-cache", (req, res) => {
+  clearAllProductCaches();
+  res.status(200).json({ message: "All caches cleared" });
+});
 const { validateUserRegistration, validateUserLogin, validateProductCreation, validateProductUpdate, validateProductId, validateProductQuery, validateCartAdd, validateOtpSend, validateOtpVerify } = require("../middleware/validation");
 
 // Register Route

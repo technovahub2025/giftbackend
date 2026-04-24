@@ -1,6 +1,8 @@
+
 const nodemailer = require("nodemailer");
 const otpGenerator = require("otp-generator");
 const User = require("../model/authmodel");
+const { clearAllProductCaches } = require("../middleware/cache");
 
 const sendOtp = async (req, res) => {
   try {
@@ -57,6 +59,7 @@ const sendOtp = async (req, res) => {
     // Send mail
     await transporter.sendMail(mailOptions);
 
+    clearAllProductCaches();
     res.status(200).json({
       message: "OTP sent successfully",
     });

@@ -30,7 +30,8 @@ const verifyOtp = async (req, res) => {
     user.otpExpiry = null;
 
     await user.save();
-
+    const { clearAllProductCaches } = require("../middleware/cache");
+    clearAllProductCaches();
     res.status(200).json({ message: "Email verified successfully" });
 
   } catch (error) {

@@ -33,6 +33,8 @@ const login = async (req, res) => {
     // Remove password from response
     const { password: _, ...userWithoutPassword } = user;
 
+    const { clearAllProductCaches } = require("../middleware/cache");
+    clearAllProductCaches();
     res.status(200).json({
       message: "Login successful",
       token,

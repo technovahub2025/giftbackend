@@ -1,5 +1,7 @@
+
 const Cart = require("../model/cartmodel");
 const Order = require("../model/checkoutmodel");
+const { clearAllProductCaches } = require("../middleware/cache");
 
 const checkout = async (req, res) => {
   try {
@@ -43,10 +45,10 @@ const checkout = async (req, res) => {
     });
 
     await order.save();
-
     // Clear cart after checkout
     await Cart.findOneAndDelete({ userId });
-
+    // Clear product caches so changes reflect immediately
+    clearAllProductCaches();
     res.status(200).json({
       message: "Order placed successfully",
       order,

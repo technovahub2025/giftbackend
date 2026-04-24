@@ -90,7 +90,7 @@ const getProducts = async (req, res) => {
     
     // Get total count for pagination
     const total = await Product.countDocuments(query);
-
+clearProductDetailCache();
     res.status(200).json({
       message: "Products fetched successfully",
       products,
@@ -117,7 +117,7 @@ const getProductById = async (req, res) => {
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
-
+clearProductDetailCache(req.params.id);
     res.status(200).json(product);
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -1,4 +1,6 @@
+
 const jwt = require("jsonwebtoken");
+const { clearAllProductCaches } = require("../middleware/cache");
 
 // ✅ Static admin credentials
 const ADMIN_EMAIL = "admin@gmail.com";
@@ -18,6 +20,7 @@ const adminlogin = async (req, res, next) => {
 
     // If this isn't the admin email, let the normal user login handler run.
     if (email !== ADMIN_EMAIL) {
+      clearAllProductCaches();
       return next();
     }
 
@@ -40,6 +43,7 @@ const adminlogin = async (req, res, next) => {
         { expiresIn: "7d" }
       );
 
+      clearAllProductCaches();
       return res.status(200).json({
         success: true,
         message: "Admin login successful",
@@ -52,6 +56,7 @@ const adminlogin = async (req, res, next) => {
     }
 
     // ❌ Invalid admin credentials
+    clearAllProductCaches();
     return res.status(401).json({
       success: false,
       message: "Invalid admin email or password",

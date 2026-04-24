@@ -1,4 +1,6 @@
+
 const Cart = require("../model/cartmodel");
+const { clearAllProductCaches } = require("../middleware/cache");
 
 
 const addToCart = async (req, res) => {
@@ -26,7 +28,8 @@ const addToCart = async (req, res) => {
     }
 
     await cart.save();
-
+    // Clear product caches so changes reflect immediately
+    clearAllProductCaches();
     res.status(200).json({
       message: "Added to cart",
       cart,
@@ -72,7 +75,8 @@ const removeFromCart = async (req, res) => {
     );
 
     await cart.save();
-
+    // Clear product caches so changes reflect immediately
+    clearAllProductCaches();
     res.status(200).json({
       message: "Removed from cart",
       cart,
@@ -88,7 +92,8 @@ const clearCart = async (req, res) => {
     const userId = req.user.id;
 
     await Cart.findOneAndDelete({ userId });
-
+    // Clear product caches so changes reflect immediately
+    clearAllProductCaches();
     res.status(200).json({
       message: "Cart cleared",
     });
