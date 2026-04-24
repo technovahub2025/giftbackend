@@ -34,7 +34,7 @@ router.post(
 );
 router.get("/products", validateProductQuery, cacheProducts(300), getProducts);
 router.get("/products/:id", validateProductId, cacheProductDetail(600), getProductById);
-router.put("/products/:id", authMiddleware, validateProductUpdate, updateProduct);
+router.put("/products/:id", authMiddleware, upload.single("image"), validateProductUpdate, updateProduct);
 router.delete("/products/:id", authMiddleware, validateProductId, deleteProduct);
 router.delete("/deleteimage/:id", authMiddleware, validateProductId, upload.single("image"), removeProductImage);
 router.post("/cart", authMiddleware, validateCartAdd, addToCart);
