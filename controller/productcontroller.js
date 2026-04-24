@@ -194,6 +194,10 @@ const deleteProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
+    // Clear both product detail cache and product list cache
+    clearProductDetailCache(req.params.id);
+    clearAllProductCaches();
+    
     console.log(`Product deleted: ${product._id} by user: ${req.user?.id || 'unknown'}`);
 
     res.status(200).json({
