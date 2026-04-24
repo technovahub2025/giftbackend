@@ -6,7 +6,8 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    // Optimized query with lean() for faster performance
+    const user = await User.findOne({ email }).select('+password').lean();
 
     if (!user) {
       return res.status(400).json({ message: "Invalid email or password" });
@@ -18,7 +19,7 @@ const login = async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    // ✅ Create JWT token
+    // Create JWT token
     const token = jwt.sign(
       {
         id: user._id,
@@ -29,10 +30,13 @@ const login = async (req, res) => {
       { expiresIn: "7d" }
     );
 
+    // Remove password from response
+    const { password: _, ...userWithoutPassword } = user;
+
     res.status(200).json({
       message: "Login successful",
       token,
-      user,
+      user: userWithoutPassword,
     });
 
   } catch (error) {

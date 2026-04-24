@@ -11,33 +11,36 @@ const { addToCart, getCart, clearCart, removeFromCart } = require("../controller
 const upload = require("../middleware/upload");
 const { checkout } = require("../controller/checkout");
 const adminlogin = require("../controller/adminlogin");
+const { cacheProducts, cacheProductDetail } = require("../middleware/cache");
+const { validateUserRegistration, validateUserLogin, validateProductCreation, validateProductUpdate, validateProductId, validateProductQuery, validateCartAdd, validateOtpSend, validateOtpVerify } = require("../middleware/validation");
 
 // Register Route
-router.post("/userregister", register);
+router.post("/userregister", validateUserRegistration, register);
 
 // Login Route
 // Admin login is handled first; if not admin, it falls through to user login.
-router.post("/login", adminlogin, login);
+router.post("/login", validateUserLogin, adminlogin, login);
 
 
-router.post("/sendotp", sendOtp);
+router.post("/sendotp", validateOtpSend, sendOtp);
 
-router.post("/verifyotp",verifyOtp);
+router.post("/verifyotp", validateOtpVerify, verifyOtp);
 router.post(
   "/products",
   authMiddleware,
   upload.single("image"),
+  validateProductCreation,
   createProduct
 );
-router.get("/products", getProducts);
-router.get("/products/:id", getProductById);
-router.put("/products/:id", authMiddleware, updateProduct);
-router.delete("/products/:id", deleteProduct);
-router.delete("/deleteimage/:id",upload.single("image"), removeProductImage); // NOT deleteProduct
-router.post("/cart", authMiddleware, addToCart);
-router.get("/cart", getCart);
-router.delete("/cart/:productId",removeFromCart);
-router.delete("/cart", clearCart);
+router.get("/products", validateProductQuery, cacheProducts(300), getProducts);
+router.get("/products/:id", validateProductId, cacheProductDetail(600), getProductById);
+router.put("/products/:id", authMiddleware, validateProductUpdate, updateProduct);
+router.delete("/products/:id", authMiddleware, validateProductId, deleteProduct);
+router.delete("/deleteimage/:id", authMiddleware, validateProductId, upload.single("image"), removeProductImage);
+router.post("/cart", authMiddleware, validateCartAdd, addToCart);
+router.get("/cart", authMiddleware, getCart);
+router.delete("/cart/:productId", authMiddleware, validateProductId, removeFromCart);
+router.delete("/cart", authMiddleware, clearCart);
 
 router.post("/checkout", authMiddleware, checkout);
 

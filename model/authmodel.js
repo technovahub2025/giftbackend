@@ -8,8 +8,9 @@ const UserSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-
-      
+      required: true,
+      unique: true,
+      index: true,
     },
     phone: {
       type: String,
@@ -17,7 +18,7 @@ const UserSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-
+      required: true,
     },
 
       newpassword: {
@@ -39,5 +40,8 @@ isVerified: {
   },
   { timestamps: true }
 );
+
+// Compound index for faster queries
+UserSchema.index({ email: 1, isVerified: 1 });
 
 module.exports = mongoose.model("auth", UserSchema);
