@@ -1,5 +1,4 @@
 const Product = require("../model/productmodel");
-const { cacheProducts, cacheProductDetail, clearAllProductCaches, clearProductDetailCache } = require("../middleware/cache");
 const sharp = require('sharp');
 
 // Optimized image processing
@@ -41,7 +40,7 @@ const createProduct = async (req, res) => {
     await product.save();
 
     // Clear cache when new product is added
-    clearAllProductCaches();
+    
 
     res.status(201).json({
       message: "Product created successfully",
@@ -90,7 +89,7 @@ const getProducts = async (req, res) => {
     
     // Get total count for pagination
     const total = await Product.countDocuments(query);
-clearProductDetailCache();
+
     res.status(200).json({
       message: "Products fetched successfully",
       products,
@@ -117,7 +116,7 @@ const getProductById = async (req, res) => {
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
-clearProductDetailCache(req.params.id);
+
     res.status(200).json(product);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -137,8 +136,7 @@ const removeProductImage = async (req, res) => {
 
     await product.save();
 
-    // Clear cache for this product
-    clearProductDetailCache(req.params.id);
+   
 
     res.status(200).json({
       message: "Product image removed successfully",
@@ -175,7 +173,6 @@ const updateProduct = async (req, res) => {
     await product.save();
 
     // Clear cache for this product
-    clearProductDetailCache(req.params.id);
 
     res.status(200).json({
       message: "Product updated successfully",
@@ -194,10 +191,7 @@ const deleteProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // Clear both product detail cache and product list cache
-    clearProductDetailCache(req.params.id);
-    clearAllProductCaches();
-    
+
     console.log(`Product deleted: ${product._id} by user: ${req.user?.id || 'unknown'}`);
 
     res.status(200).json({

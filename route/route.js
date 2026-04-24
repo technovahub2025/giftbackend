@@ -3,20 +3,17 @@ const router = express.Router();
 
 const register  = require("../controller/userregister");
 const  login  = require("../controller/userlogin");
-const { sendOtp } = require("../controller/sendotp");
-const { verifyOtp } = require("../controller/verifyotp");
+
+
 const authMiddleware = require("../middleware/authmiddleware");
 const { createProduct, getProducts, getProductById, updateProduct, deleteProduct, removeProductImage } = require("../controller/productcontroller");
 const { addToCart, getCart, clearCart, removeFromCart } = require("../controller/cartcontroller");
 const upload = require("../middleware/upload");
 const { checkout } = require("../controller/checkout");
 const adminlogin = require("../controller/adminlogin");
-const { cacheProducts, cacheProductDetail, clearAllProductCaches } = require("../middleware/cache");
+
 // Route to clear all caches (for admin or development use)
-router.post("/clear-cache", (req, res) => {
-  clearAllProductCaches();
-  res.status(200).json({ message: "All caches cleared" });
-});
+
 const { validateUserRegistration, validateUserLogin, validateProductCreation, validateProductUpdate, validateProductId, validateProductQuery, validateCartAdd, validateOtpSend, validateOtpVerify } = require("../middleware/validation");
 
 // Register Route
@@ -27,9 +24,7 @@ router.post("/userregister", validateUserRegistration, register);
 router.post("/login", validateUserLogin, adminlogin, login);
 
 
-router.post("/sendotp", validateOtpSend, sendOtp);
 
-router.post("/verifyotp", validateOtpVerify, verifyOtp);
 router.post(
   "/products",
   authMiddleware,
@@ -37,8 +32,8 @@ router.post(
   validateProductCreation,
   createProduct
 );
-router.get("/products", validateProductQuery, cacheProducts(300), getProducts);
-router.get("/products/:id", validateProductId, cacheProductDetail(600), getProductById);
+router.get("/products", validateProductQuery, getProducts);
+router.get("/products/:id", validateProductId, getProductById);
 router.put("/products/:id", authMiddleware, upload.single("image"), validateProductUpdate, updateProduct);
 router.delete("/products/:id", authMiddleware, validateProductId, deleteProduct);
 router.delete("/deleteimage/:id", authMiddleware, validateProductId, upload.single("image"), removeProductImage);

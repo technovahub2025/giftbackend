@@ -29,8 +29,7 @@ const register = async (req, res) => {
     });
 
     await user.save();
-    const { clearAllProductCaches } = require("../middleware/cache");
-    clearAllProductCaches();
+ 
     // Return optimized user object
     res.status(201).json({
       message: "User registered successfully",

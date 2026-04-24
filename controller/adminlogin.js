@@ -1,6 +1,6 @@
 
 const jwt = require("jsonwebtoken");
-const { clearAllProductCaches } = require("../middleware/cache");
+
 
 // ✅ Static admin credentials
 const ADMIN_EMAIL = "admin@gmail.com";

@@ -1,6 +1,6 @@
 
 const Cart = require("../model/cartmodel");
-const { clearAllProductCaches } = require("../middleware/cache");
+
 
 
 const addToCart = async (req, res) => {
