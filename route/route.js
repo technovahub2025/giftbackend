@@ -21,8 +21,9 @@ router.post("/userregister", validateUserRegistration, register);
 
 // Login Route
 // Admin login is handled first; if not admin, it falls through to user login.
-router.post("/login", validateUserLogin, adminlogin, login);
+router.post("/login", validateUserLogin, adminlogin);
 
+router.post("/userlogin",validateUserLogin,login);
 
 
 router.post(
