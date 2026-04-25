@@ -16,10 +16,11 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    password: {
-      type: String,
-      required: true,
-    },
+  password: {
+  type: String,
+  required: true,
+  select: false
+},
 
       newpassword: {
       type: String,
