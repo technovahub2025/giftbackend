@@ -19,11 +19,7 @@ const adminlogin = async (req, res, next) => {
     console.log("Password match:", password === ADMIN_PASSWORD);
 
     // If this isn't the admin email, let the normal user login handler run.
-    if (email !== ADMIN_EMAIL) {
-      clearAllProductCaches();
-      return next();
-    }
-
+   
     // ✅ Check admin credentials
     if (password === ADMIN_PASSWORD) {
       if (!process.env.JWT_SECRET) {
@@ -43,7 +39,6 @@ const adminlogin = async (req, res, next) => {
         { expiresIn: "7d" }
       );
 
-      clearAllProductCaches();
       return res.status(200).json({
         success: true,
         message: "Admin login successful",
@@ -55,8 +50,7 @@ const adminlogin = async (req, res, next) => {
       });
     }
 
-    // ❌ Invalid admin credentials
-    clearAllProductCaches();
+    
     return res.status(401).json({
       success: false,
       message: "Invalid admin email or password",
