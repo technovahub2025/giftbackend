@@ -1,15 +1,15 @@
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
-const User = require("../model/authmodel");
-
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Optimized query with lean() for faster performance
-    const user = await User.findOne({ email }).select('+password').lean();
+    // Validate input
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password required" });
+    }
 
-    if (!user) {
+    const user = await User.findOne({ email }).select("+password");
+
+    if (!user || !user.password) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
@@ -19,7 +19,10 @@ const login = async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    // Create JWT token
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is missing");
+    }
+
     const token = jwt.sign(
       {
         id: user._id,
@@ -30,20 +33,17 @@ const login = async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    // Remove password from response
-    const { password: _, ...userWithoutPassword } = user;
+    const userObj = user.toObject();
+    delete userObj.password;
 
-   
-   
     res.status(200).json({
       message: "Login successful",
       token,
-      user: userWithoutPassword,
+      user: userObj,
     });
 
   } catch (error) {
+    console.error("LOGIN ERROR:", error); // 👈 CRITICAL
     res.status(500).json({ message: error.message });
   }
 };
-
-module.exports = login ;
