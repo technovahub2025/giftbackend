@@ -1,13 +1,16 @@
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const User = require("../model/authmodel"); // 👈 FIXED
+
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validate input
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password required" });
     }
 
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ email }).select("+password"); // 👈 FIXED
 
     if (!user || !user.password) {
       return res.status(400).json({ message: "Invalid email or password" });
@@ -43,10 +46,9 @@ const login = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("LOGIN ERROR:", error); // 👈 CRITICAL
+    console.error("LOGIN ERROR:", error);
     res.status(500).json({ message: error.message });
   }
 };
-
 
 module.exports = login;
